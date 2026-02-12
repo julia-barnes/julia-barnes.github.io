@@ -18,38 +18,57 @@
       <span class="site-title">What Should I Watch Next?</span>
     </div>
     <div class="header-right">
-      <span class="theme-label">Theme</span>
+      <button id="fav-panel-btn" class="header-btn" style="display:none" title="View Favorites">
+        ❤️ Favorites
+      </button>
+      <button id="custom-theme-btn" class="header-btn" title="Create Custom Theme">
+        🎨 Mix
+      </button>
       <select id="theme-select" class="theme-select">
         <option value="light">☀️ Light</option>
         <option value="dark">🌙 Dark</option>
         <option value="ocean">🌊 Ocean</option>
         <option value="rose">🌸 Rosé</option>
         <option value="forest">🌲 Forest</option>
+        <option value="sunset">🌅 Sunset</option>
+        <option value="lavender">💜 Lavender</option>
+        <option value="midnight">🌌 Midnight</option>
+        <option value="cyberpunk">⚡ Cyberpunk</option>
+        <option value="candy">🍬 Candy</option>
+        <option value="mono">⬛ Mono</option>
+        <option value="custom">🎨 Custom…</option>
       </select>
+      <button id="profile-btn" class="header-btn profile-btn">
+        <span>👤 Log In</span>
+      </button>
     </div>
   </header>
 
-  <!-- ======== Main Content ======== -->
-  <main class="container">
+  <!-- ======== Welcome Banner (logged out) ======== -->
+  <div id="welcome-banner" class="welcome-banner">
+    <div class="welcome-emoji">🎬📚📺</div>
+    <div class="welcome-title">What Should I Watch Next?</div>
+    <div class="welcome-desc">
+      Add your favorite manga, books, TV shows, and movies — and we'll recommend more you'll love, plus tell you your favorite genre.
+    </div>
+    <button id="welcome-login-btn" class="btn btn-primary">🚀 Get Started — Create a Profile</button>
+  </div>
 
-    <!-- Search Section -->
+  <!-- ======== Main Content (logged in) ======== -->
+  <main id="main-content" class="container hidden">
+
+    <!-- Search -->
     <section class="section">
       <h2 class="section-title">🔍 Add Your Favorites</h2>
-      <p class="section-subtitle">Search for manga, books, TV shows, or movies you love — and we'll figure out the rest.</p>
+      <p class="section-subtitle">Search for manga, books, TV shows, or movies you love.</p>
       <div class="search-wrapper">
         <span class="search-icon">⌕</span>
-        <input
-          type="text"
-          id="search-input"
-          class="search-input"
-          placeholder="Search for a title..."
-          autocomplete="off"
-        />
+        <input type="text" id="search-input" class="search-input" placeholder="Search for a title..." autocomplete="off" />
         <div id="search-results" class="search-results hidden"></div>
       </div>
     </section>
 
-    <!-- Favorites Section -->
+    <!-- Favorites -->
     <section class="section">
       <h2 class="section-title">
         ❤️ Your Favorites
@@ -70,7 +89,7 @@
 
     <hr class="divider" />
 
-    <!-- Results Section (hidden until favorites are added) -->
+    <!-- Results Section -->
     <div id="results-section" class="results-section hidden">
 
       <!-- Genre Profile -->
@@ -88,7 +107,7 @@
       <!-- Recommendations -->
       <section class="section">
         <h2 class="section-title">✨ Recommended For You</h2>
-        <p class="section-subtitle">Based on the genres and themes in your favorites.</p>
+        <p class="section-subtitle">Based on the genres and themes in your favorites. Click the links to watch or read!</p>
         <div class="cat-filters">
           <button class="rec-cat-filter active" data-category="all">All</button>
           <button class="rec-cat-filter" data-category="manga">📚 Manga</button>
@@ -101,19 +120,144 @@
 
       <hr class="divider" />
 
-      <!-- Cross-media Recommendations -->
+      <!-- Cross Recommendations -->
       <section id="cross-recs-section" class="cross-recs-section hidden">
         <h2 class="section-title">🔀 Try Something Different</h2>
         <p class="section-subtitle">Recommendations across different media types based on your taste.</p>
         <div id="cross-recs-list" class="cross-recs-grid"></div>
       </section>
-
     </div>
   </main>
+
+  <!-- ======== Login / Profile Modal ======== -->
+  <div id="login-overlay" class="modal-overlay">
+    <div class="modal">
+      <button id="login-close" class="modal-close">&times;</button>
+      <div class="modal-title">👤 Your Profile</div>
+
+      <!-- Create new -->
+      <div class="login-section">
+        <div class="login-section-title">Create New Profile</div>
+        <div class="login-form">
+          <input type="text" id="profile-name-input" class="login-input" placeholder="Enter your name…" maxlength="30" />
+          <div class="login-section-title" style="margin-bottom:0.25rem; margin-top:0.25rem;">Pick an Avatar</div>
+          <div class="avatar-picker">
+            <div class="avatar-option selected" data-avatar="😊">😊</div>
+            <div class="avatar-option" data-avatar="😎">😎</div>
+            <div class="avatar-option" data-avatar="🤓">🤓</div>
+            <div class="avatar-option" data-avatar="🦊">🦊</div>
+            <div class="avatar-option" data-avatar="🐱">🐱</div>
+            <div class="avatar-option" data-avatar="🐉">🐉</div>
+            <div class="avatar-option" data-avatar="🌸">🌸</div>
+            <div class="avatar-option" data-avatar="⚡">⚡</div>
+            <div class="avatar-option" data-avatar="🎮">🎮</div>
+            <div class="avatar-option" data-avatar="🎵">🎵</div>
+            <div class="avatar-option" data-avatar="🌙">🌙</div>
+            <div class="avatar-option" data-avatar="🔥">🔥</div>
+            <div class="avatar-option" data-avatar="💀">💀</div>
+            <div class="avatar-option" data-avatar="🍄">🍄</div>
+            <div class="avatar-option" data-avatar="🦋">🦋</div>
+            <div class="avatar-option" data-avatar="🌊">🌊</div>
+          </div>
+          <button id="create-profile-btn" class="btn btn-primary">Create Profile</button>
+        </div>
+      </div>
+
+      <!-- Existing profiles -->
+      <div class="login-section">
+        <div class="login-section-title">Switch Profile</div>
+        <div id="profile-list" class="profile-list"></div>
+      </div>
+
+      <div class="login-actions">
+        <button id="logout-btn" class="btn btn-outline btn-sm">🚪 Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== Custom Theme Modal ======== -->
+  <div id="theme-overlay" class="modal-overlay">
+    <div class="modal">
+      <button id="theme-close" class="modal-close">&times;</button>
+      <div class="modal-title">🎨 Custom Theme Builder</div>
+      <p class="section-subtitle">Mix your own colors! Adjust the pickers and see a live preview below.</p>
+
+      <div class="theme-builder-grid">
+        <div class="theme-color-row">
+          <span class="theme-color-label">Background</span>
+          <input type="color" id="theme-bg" class="theme-color-input" value="#f8f9fa" />
+          <span id="theme-hex-bg" class="theme-color-hex">#f8f9fa</span>
+        </div>
+        <div class="theme-color-row">
+          <span class="theme-color-label">Card</span>
+          <input type="color" id="theme-card" class="theme-color-input" value="#ffffff" />
+          <span id="theme-hex-card" class="theme-color-hex">#ffffff</span>
+        </div>
+        <div class="theme-color-row">
+          <span class="theme-color-label">Text</span>
+          <input type="color" id="theme-text" class="theme-color-input" value="#1a1a2e" />
+          <span id="theme-hex-text" class="theme-color-hex">#1a1a2e</span>
+        </div>
+        <div class="theme-color-row">
+          <span class="theme-color-label">Accent</span>
+          <input type="color" id="theme-accent" class="theme-color-input" value="#6366f1" />
+          <span id="theme-hex-accent" class="theme-color-hex">#6366f1</span>
+        </div>
+        <div class="theme-color-row">
+          <span class="theme-color-label">Border</span>
+          <input type="color" id="theme-border" class="theme-color-input" value="#e5e7eb" />
+          <span id="theme-hex-border" class="theme-color-hex">#e5e7eb</span>
+        </div>
+      </div>
+
+      <!-- Live Preview -->
+      <div id="theme-preview" class="theme-preview">
+        <div class="theme-preview-title">Preview</div>
+        <div>This is how your text will look.</div>
+        <div class="theme-preview-card" style="padding:0.5rem;border:1px solid;border-radius:8px;">
+          Card element preview
+        </div>
+        <div class="theme-preview-bar"></div>
+      </div>
+
+      <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+        <button id="theme-apply-btn" class="btn btn-primary btn-sm">✅ Apply Theme</button>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="login-section-title">Save This Theme</div>
+      <div class="theme-save-row">
+        <input type="text" id="theme-save-name" class="theme-save-input" placeholder="Theme name…" maxlength="20" />
+        <button id="theme-save-btn" class="btn btn-outline btn-sm">💾 Save</button>
+      </div>
+
+      <div class="login-section-title" style="margin-top:1rem;">Your Saved Themes</div>
+      <div id="saved-themes-list" class="saved-themes-list"></div>
+    </div>
+  </div>
+
+  <!-- ======== Favorites Panel (sidebar) ======== -->
+  <div id="fav-panel-overlay" class="fav-panel-overlay"></div>
+  <aside id="fav-panel" class="fav-panel">
+    <div class="fav-panel-header">
+      <span class="fav-panel-title">❤️ Your Favorites</span>
+      <button id="fav-panel-close" class="fav-panel-close">&times;</button>
+    </div>
+    <div id="fav-panel-body" class="fav-panel-body"></div>
+    <div class="fav-panel-footer">
+      <button id="fav-panel-export" class="btn btn-outline btn-sm">📤 Export Profile</button>
+    </div>
+  </aside>
+
+  <!-- ======== Toast ======== -->
+  <div id="toast-container" class="toast-container"></div>
 
   <!-- Scripts -->
   <script src="js/database.js"></script>
   <script src="js/recommendations.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/themes.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
