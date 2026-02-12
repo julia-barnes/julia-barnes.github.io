@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What Should I Watch Next?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ======== Header ======== -->
+  <header class="header">
+    <div class="header-left">
+      <span class="logo">🎯</span>
+      <span class="site-title">What Should I Watch Next?</span>
+    </div>
+    <div class="header-right">
+      <span class="theme-label">Theme</span>
+      <select id="theme-select" class="theme-select">
+        <option value="light">☀️ Light</option>
+        <option value="dark">🌙 Dark</option>
+        <option value="ocean">🌊 Ocean</option>
+        <option value="rose">🌸 Rosé</option>
+        <option value="forest">🌲 Forest</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- ======== Main Content ======== -->
+  <main class="container">
+
+    <!-- Search Section -->
+    <section class="section">
+      <h2 class="section-title">🔍 Add Your Favorites</h2>
+      <p class="section-subtitle">Search for manga, books, TV shows, or movies you love — and we'll figure out the rest.</p>
+      <div class="search-wrapper">
+        <span class="search-icon">⌕</span>
+        <input
+          type="text"
+          id="search-input"
+          class="search-input"
+          placeholder="Search for a title..."
+          autocomplete="off"
+        />
+        <div id="search-results" class="search-results hidden"></div>
+      </div>
+    </section>
+
+    <!-- Favorites Section -->
+    <section class="section">
+      <h2 class="section-title">
+        ❤️ Your Favorites
+        <span id="fav-count" class="fav-count">0</span>
+      </h2>
+      <div class="cat-filters">
+        <button class="cat-filter active" data-category="all">All</button>
+        <button class="cat-filter" data-category="manga">📚 Manga</button>
+        <button class="cat-filter" data-category="book">📖 Books</button>
+        <button class="cat-filter" data-category="tv">📺 TV</button>
+        <button class="cat-filter" data-category="movie">🎬 Movies</button>
+      </div>
+      <div id="favorites-empty" class="favorites-empty">
+        Start typing above to search and add your favorite titles!
+      </div>
+      <div id="favorites-list" class="favorites-grid"></div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- Results Section (hidden until favorites are added) -->
+    <div id="results-section" class="results-section hidden">
+
+      <!-- Genre Profile -->
+      <section class="section" id="genre-profile">
+        <h2 class="section-title">🧬 Your Genre Profile</h2>
+        <div class="genre-profile-header">
+          <span id="genre-profile-label" class="genre-profile-label"></span>
+          <span id="top-genre-badge" class="top-genre-badge"></span>
+        </div>
+        <div id="genre-breakdown" class="genre-breakdown"></div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- Recommendations -->
+      <section class="section">
+        <h2 class="section-title">✨ Recommended For You</h2>
+        <p class="section-subtitle">Based on the genres and themes in your favorites.</p>
+        <div class="cat-filters">
+          <button class="rec-cat-filter active" data-category="all">All</button>
+          <button class="rec-cat-filter" data-category="manga">📚 Manga</button>
+          <button class="rec-cat-filter" data-category="book">📖 Books</button>
+          <button class="rec-cat-filter" data-category="tv">📺 TV</button>
+          <button class="rec-cat-filter" data-category="movie">🎬 Movies</button>
+        </div>
+        <div id="recommendations-list" class="rec-grid"></div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- Cross-media Recommendations -->
+      <section id="cross-recs-section" class="cross-recs-section hidden">
+        <h2 class="section-title">🔀 Try Something Different</h2>
+        <p class="section-subtitle">Recommendations across different media types based on your taste.</p>
+        <div id="cross-recs-list" class="cross-recs-grid"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/database.js"></script>
+  <script src="js/recommendations.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
