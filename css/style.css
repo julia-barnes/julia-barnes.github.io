@@ -201,6 +201,7 @@ body {
   padding: 2rem; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto;
   box-shadow: var(--shadow-lg); position: relative;
 }
+.modal-wide { max-width: 700px; }
 .modal-close {
   position: absolute; top: 1rem; right: 1rem; background: none; border: none;
   color: var(--text-muted); font-size: 1.4rem; cursor: pointer; line-height: 1;
@@ -519,6 +520,51 @@ body {
 @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(10px); } }
 
 /* ============================================================
+   Profile Picture
+   ============================================================ */
+.profile-pic-upload { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.profile-pic-file-input { display: none; }
+.profile-pic-label { cursor: pointer; }
+.profile-pic-preview { margin-top: 0.5rem; }
+.profile-pic-preview.hidden { display: none; }
+.profile-pic-thumb {
+  width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+  border: 3px solid var(--accent); box-shadow: var(--shadow);
+}
+.profile-pic-small {
+  width: 24px; height: 24px; border-radius: 50%; object-fit: cover;
+  border: 1.5px solid var(--accent); vertical-align: middle;
+}
+.profile-item-pic {
+  width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--accent); flex-shrink: 0;
+}
+
+/* ============================================================
+   Sites Directory
+   ============================================================ */
+.sites-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;
+}
+.sites-category { display: flex; flex-direction: column; gap: 0.5rem; }
+.sites-cat-title {
+  font-size: 0.9rem; font-weight: 700; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  padding-bottom: 0.4rem; border-bottom: 2px solid var(--accent); margin-bottom: 0.25rem;
+}
+.site-card {
+  display: block; padding: 0.7rem 0.85rem; border: 1px solid var(--border);
+  border-radius: 10px; text-decoration: none; color: var(--text);
+  transition: all 0.2s; background: var(--bg);
+}
+.site-card:hover {
+  border-color: var(--accent); background: var(--accent-light);
+  transform: translateY(-1px); box-shadow: var(--shadow);
+}
+.site-card-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.15rem; }
+.site-card-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
+/* ============================================================
    Responsive
    ============================================================ */
 @media (max-width: 640px) {
@@ -532,4 +578,6 @@ body {
   .genre-profile-label { font-size: 1.2rem; }
   .fav-panel { width: 100vw; }
   .modal { width: 95%; padding: 1.5rem; }
+  .modal-wide { max-width: 95%; }
+  .sites-grid { grid-template-columns: 1fr; }
 }

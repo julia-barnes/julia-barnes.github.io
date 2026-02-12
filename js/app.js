@@ -67,10 +67,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // Toast
   const toastContainer = document.getElementById("toast-container");
 
+  // Sites Modal
+  const sitesBtn = document.getElementById("sites-btn");
+  const sitesOverlay = document.getElementById("sites-overlay");
+  const sitesClose = document.getElementById("sites-close");
+
+  // Profile Picture
+  const profilePicInput = document.getElementById("profile-pic-input");
+  const profilePicPreview = document.getElementById("profile-pic-preview");
+  const profilePicClear = document.getElementById("profile-pic-clear");
+
   let searchDebounce = null;
   let activeCategory = "all";
   let activeRecCategory = "all";
   let selectedAvatar = "😊";
+  let uploadedProfilePic = null;
 
   // ---- Initialize ----
   initApp();
@@ -92,8 +103,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const profile = profileMgr.getActive();
     welcomeBanner.classList.add("hidden");
     mainContent.classList.remove("hidden");
-    profileBtn.innerHTML = `<span class="profile-avatar">${profile.avatar}</span><span class="profile-name">${escapeHtml(profile.name)}</span>`;
+    const avatarDisplay = profile.profilePic
+      ? `<img src="${profile.profilePic}" class="profile-pic-small" alt="pic">`
+      : `<span class="profile-avatar">${profile.avatar}</span>`;
+    profileBtn.innerHTML = `${avatarDisplay}<span class="profile-name">${escapeHtml(profile.name)}</span>`;
     favPanelBtn.style.display = "";
+    sitesBtn.style.display = "";
   }
 
   function showLoggedOutState() {
@@ -101,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mainContent.classList.add("hidden");
     profileBtn.innerHTML = `<span>👤 Log In</span>`;
     favPanelBtn.style.display = "none";
+    sitesBtn.style.display = "none";
     resultsSection.classList.add("hidden");
   }
 
@@ -145,8 +161,14 @@ document.addEventListener("DOMContentLoaded", () => {
   createProfileBtn.addEventListener("click", () => {
     const name = profileNameInput.value.trim();
     if (!name) { toast("Please enter a name"); return; }
-    profileMgr.createProfile(name, selectedAvatar);
+    profileMgr.createProfile(name, selectedAvatar, uploadedProfilePic);
     profileNameInput.value = "";
+    uploadedProfilePic = null;
+    if (profilePicPreview) {
+      profilePicPreview.innerHTML = "";
+      profilePicPreview.classList.add("hidden");
+    }
+    if (profilePicClear) profilePicClear.classList.add("hidden");
     engine.favorites = [];
     loginOverlay.classList.remove("open");
     showLoggedInState();
@@ -176,7 +198,10 @@ document.addEventListener("DOMContentLoaded", () => {
     profileListEl.innerHTML = profiles
       .map((p) => `
         <div class="profile-item ${p.id === activeId ? 'active' : ''}" data-id="${p.id}">
-          <span class="profile-item-avatar">${p.avatar}</span>
+          ${p.profilePic
+            ? `<img src="${p.profilePic}" class="profile-item-pic" alt="pic">`
+            : `<span class="profile-item-avatar">${p.avatar}</span>`
+          }
           <div class="profile-item-info">
             <div class="profile-item-name">${escapeHtml(p.name)}</div>
             <div class="profile-item-meta">${p.favorites ? p.favorites.length : 0} favorites</div>
@@ -607,25 +632,93 @@ document.addEventListener("DOMContentLoaded", () => {
     switch (item.category) {
       case "manga":
         links.push({ label: "MyAnimeList", url: `https://myanimelist.net/search/all?q=${q}` });
+        links.push({ label: "MangaFire", url: `https://mangafire.to/filter?keyword=${q}` });
+        links.push({ label: "WeebCentral", url: `https://weebcentral.com/search?q=${q}` });
         links.push({ label: "Crunchyroll", url: `https://www.crunchyroll.com/search?q=${q}` });
+        links.push({ label: "MangaDex", url: `https://mangadex.org/search?q=${q}` });
         links.push({ label: "Amazon", url: `https://www.amazon.com/s?k=${q}+manga` });
         break;
       case "book":
         links.push({ label: "Goodreads", url: `https://www.goodreads.com/search?q=${q}` });
         links.push({ label: "Amazon", url: `https://www.amazon.com/s?k=${q}+book` });
         links.push({ label: "Libby", url: `https://libbyapp.com/search/query-${q}/page-1` });
+        links.push({ label: "OpenLibrary", url: `https://openlibrary.org/search?q=${q}` });
+        links.push({ label: "StoryGraph", url: `https://app.thestorygraph.com/browse?search_term=${q}` });
         break;
       case "tv":
         links.push({ label: "IMDb", url: `https://www.imdb.com/find/?q=${q}&s=tt` });
         links.push({ label: "JustWatch", url: `https://www.justwatch.com/us/search?q=${q}` });
+        links.push({ label: "Trakt", url: `https://trakt.tv/search?query=${q}` });
+        links.push({ label: "TVMaze", url: `https://www.tvmaze.com/search?q=${q}` });
         break;
       case "movie":
         links.push({ label: "IMDb", url: `https://www.imdb.com/find/?q=${q}&s=tt` });
         links.push({ label: "JustWatch", url: `https://www.justwatch.com/us/search?q=${q}` });
         links.push({ label: "Letterboxd", url: `https://letterboxd.com/search/${q}/` });
+        links.push({ label: "TMDb", url: `https://www.themoviedb.org/search?query=${q}` });
         break;
     }
     return links;
+  }
+
+  // ---- Profile Picture Upload ----
+  if (profilePicInput) {
+    profilePicInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) { toast("Please select an image file"); return; }
+      if (file.size > 500000) { toast("Image too large (max 500KB)"); return; }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        // Resize to keep localStorage small
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const maxSize = 128;
+          let w = img.width, h = img.height;
+          if (w > h) { h = (h / w) * maxSize; w = maxSize; }
+          else { w = (w / h) * maxSize; h = maxSize; }
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+          uploadedProfilePic = dataUrl;
+          profilePicPreview.innerHTML = `<img src="${dataUrl}" class="profile-pic-thumb" alt="preview">`;
+          profilePicPreview.classList.remove("hidden");
+          profilePicClear.classList.remove("hidden");
+          // Deselect emoji avatars
+          document.querySelectorAll(".avatar-option").forEach((a) => a.classList.remove("selected"));
+          toast("Photo uploaded!");
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (profilePicClear) {
+    profilePicClear.addEventListener("click", () => {
+      uploadedProfilePic = null;
+      profilePicPreview.innerHTML = "";
+      profilePicPreview.classList.add("hidden");
+      profilePicClear.classList.add("hidden");
+      profilePicInput.value = "";
+      // Re-select default avatar
+      const first = document.querySelector('.avatar-option[data-avatar="😊"]');
+      if (first) { first.classList.add("selected"); selectedAvatar = "😊"; }
+      toast("Photo removed");
+    });
+  }
+
+  // ---- Sites Directory Modal ----
+  if (sitesBtn) {
+    sitesBtn.addEventListener("click", () => sitesOverlay.classList.add("open"));
+  }
+  if (sitesClose) {
+    sitesClose.addEventListener("click", () => sitesOverlay.classList.remove("open"));
+  }
+  if (sitesOverlay) {
+    sitesOverlay.addEventListener("click", (e) => { if (e.target === sitesOverlay) sitesOverlay.classList.remove("open"); });
   }
 
   // ---- Helpers ----

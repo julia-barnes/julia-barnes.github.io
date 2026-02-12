@@ -23,12 +23,13 @@ class ProfileManager {
     localStorage.setItem(this.storageKey, JSON.stringify(this.profiles));
   }
 
-  createProfile(name, avatar) {
+  createProfile(name, avatar, profilePic) {
     const id = "profile_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
     this.profiles[id] = {
       id,
       name: name.trim(),
       avatar: avatar || "😊",
+      profilePic: profilePic || null,
       favorites: [],
       theme: "light",
       customThemes: {},
@@ -122,6 +123,29 @@ class ProfileManager {
   getCustomThemes() {
     const profile = this.getActive();
     return profile && profile.customThemes ? profile.customThemes : {};
+  }
+
+  // ---- Profile Picture ----
+  updateProfilePic(dataUrl) {
+    const profile = this.getActive();
+    if (!profile) return;
+    profile.profilePic = dataUrl;
+    this.saveProfiles();
+  }
+
+  updateAvatar(emoji) {
+    const profile = this.getActive();
+    if (!profile) return;
+    profile.avatar = emoji;
+    profile.profilePic = null;
+    this.saveProfiles();
+  }
+
+  clearProfilePic() {
+    const profile = this.getActive();
+    if (!profile) return;
+    profile.profilePic = null;
+    this.saveProfiles();
   }
 
   // ---- Export / Import ----
